@@ -1,3 +1,3 @@
 # api/index.py
 from flask import Flask
-from app import app as application
+from app import app 
