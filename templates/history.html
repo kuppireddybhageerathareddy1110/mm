@@ -5,56 +5,73 @@
   <title>Sentiment History</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff; /* white background */
+      z-index: -1; /* Behind everything */
+      top: 0;
+      left: 0;
+    }
+
+    .main-content {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
 </head>
-<body class="bg-white px-6 py-10" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+<body style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
 
-  <h1 class="text-3xl font-bold text-center text-[#171412] mb-6">Sentiment History</h1>
+  <!-- Particle background -->
+  <div id="particles-js"></div>
 
- <form method="POST" class="flex flex-wrap gap-4 justify-center mb-6">
+  <!-- Main content -->
+  <div class="main-content px-6 py-10">
+    <h1 class="text-3xl font-bold text-center text-[#171412] mb-6">Sentiment History</h1>
 
-  <!-- Chart type -->
-  <select name="chart" class="rounded px-3 py-2 border border-gray-300">
-    <option value="bar" {% if chart_type == 'bar' %}selected{% endif %}>Bar Chart</option>
-    <option value="pie" {% if chart_type == 'pie' %}selected{% endif %}>Pie Chart</option>
-  </select>
+    <form method="POST" class="flex flex-wrap gap-4 justify-center mb-6">
+      <select name="chart" class="rounded px-3 py-2 border border-gray-300">
+        <option value="bar" {% if chart_type == 'bar' %}selected{% endif %}>Bar Chart</option>
+        <option value="pie" {% if chart_type == 'pie' %}selected{% endif %}>Pie Chart</option>
+      </select>
+      <select name="limit" class="rounded px-3 py-2 border border-gray-300">
+        <option value="5" {% if limit == 5 %}selected{% endif %}>Last 5</option>
+        <option value="10" {% if limit == 10 %}selected{% endif %}>Last 10</option>
+        <option value="25" {% if limit == 25 %}selected{% endif %}>Last 25</option>
+      </select>
+      <select name="sort_by" class="rounded px-3 py-2 border border-gray-300">
+        <option value="default">Default</option>
+        <option value="polarity" {% if sort_by == 'polarity' %}selected{% endif %}>Sort by Polarity</option>
+        <option value="sentiment" {% if sort_by == 'sentiment' %}selected{% endif %}>Sort by Sentiment</option>
+      </select>
+      <input type="date" name="start_date" value="{{ start_date }}" class="px-3 py-2 border border-gray-300 rounded">
+      <input type="date" name="end_date" value="{{ end_date }}" class="px-3 py-2 border border-gray-300 rounded">
+      <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" type="submit">Filter</button>
+      <a href="/export_csv" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Export CSV</a>
+      {% if session.user == 'admin@example.com' %}
+        <a href="/admin" class="text-sm text-blue-600 underline">Admin Dashboard</a>
+      {% endif %}
+    </form>
 
-  <!-- Entry limit -->
-  <select name="limit" class="rounded px-3 py-2 border border-gray-300">
-    <option value="5" {% if limit == 5 %}selected{% endif %}>Last 5</option>
-    <option value="10" {% if limit == 10 %}selected{% endif %}>Last 10</option>
-    <option value="25" {% if limit == 25 %}selected{% endif %}>Last 25</option>
-  </select>
+    <!-- Chart -->
+    <div class="max-w-2xl mx-auto bg-[#f4f2f1] p-6 rounded-xl shadow mb-10">
+      <canvas id="sentimentChart"></canvas>
+    </div>
 
-  <!-- Sort by -->
-  <select name="sort_by" class="rounded px-3 py-2 border border-gray-300">
-    <option value="default">Default</option>
-    <option value="polarity" {% if sort_by == 'polarity' %}selected{% endif %}>Sort by Polarity</option>
-    <option value="sentiment" {% if sort_by == 'sentiment' %}selected{% endif %}>Sort by Sentiment</option>
-  </select>
-
-  <!-- Date range -->
-  <input type="date" name="start_date" value="{{ start_date }}" class="px-3 py-2 border border-gray-300 rounded">
-  <input type="date" name="end_date" value="{{ end_date }}" class="px-3 py-2 border border-gray-300 rounded">
-
-  <!-- Submit and Export -->
-  <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" type="submit">Filter</button>
-  <a href="/export_csv" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Export CSV</a>
-{% if session.user == 'admin@example.com' %}
-  <a href="/admin" class="text-sm text-blue-600 underline">Admin Dashboard</a>
-{% endif %}
-
-</form>
-
-  <!-- Chart -->
-  <div class="max-w-2xl mx-auto bg-[#f4f2f1] p-6 rounded-xl shadow mb-10">
-    <canvas id="sentimentChart"></canvas>
-  </div>
-
-  <!-- Sentiment Entries -->
-  <div class="max-w-3xl mx-auto">
-    <h2 class="text-xl font-semibold mb-4">Recent Entries</h2>
-    <ul class="space-y-3">
-      {% for entry in results %}
+    <!-- Sentiment Entries -->
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-xl font-semibold mb-4">Recent Entries</h2>
+      <ul class="space-y-3">
+        {% for entry in results %}
         <li class="p-4 bg-[#f3e2d2] rounded-lg shadow text-[#171412] flex justify-between items-center">
           <div>
             <strong>{{ entry.sentiment }}</strong> —
@@ -67,43 +84,80 @@
             </button>
           </form>
         </li>
-      {% else %}
+        {% else %}
         <li class="text-center text-gray-500 italic">No sentiment entries found.</li>
-      {% endfor %}
-    </ul>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 
+  <!-- Chart.js Script -->
   <script>
-  const ctx = document.getElementById('sentimentChart').getContext('2d');
-  const chartType = "{{ chart_type }}";
-  const labels = {{ labels | tojson }};
-  const values = {{ values | tojson }};
+    const ctx = document.getElementById('sentimentChart').getContext('2d');
+    const chartType = "{{ chart_type }}";
+    const labels = {{ labels | tojson }};
+    const values = {{ values | tojson }};
 
-  const config = {
-    type: chartType,
-    data: {
-      labels: labels,
-      datasets: [{
-        data: values,
-        backgroundColor: ['#34d399', '#f87171', '#fbbf24'], // green, red, yellow
-        borderColor: '#fff',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: true },
-        title: {
-          display: true,
-          text: 'Sentiment Analysis Summary'
+    const config = {
+      type: chartType,
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: ['#34d399', '#f87171', '#fbbf24'],
+          borderColor: '#fff',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true },
+          title: { display: true, text: 'Sentiment Analysis Summary' }
         }
       }
-    }
-  };
+    };
 
-  new Chart(ctx, config);
-</script>
+    new Chart(ctx, config);
+  </script>
+
+  <!-- particles.js config -->
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80 },
+        color: { value: "#444444" }, // Dark visible particles
+        shape: { type: "circle" },
+        opacity: { value: 0.9 },     // HIGH opacity for visibility
+        size: { value: 3, random: true },
+        line_linked: {
+          enable: true,
+          distance: 120,
+          color: "#888888",
+          opacity: 0.6,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 1.2,
+          direction: "none",
+          out_mode: "bounce"
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+          onclick: { enable: true, mode: "push" }
+        },
+        modes: {
+          repulse: { distance: 100 },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
 
 </body>
 </html>

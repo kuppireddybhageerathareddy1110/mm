@@ -4,14 +4,88 @@
   <meta charset="UTF-8" />
   <title>Forgot Password</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- particles.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <style>
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #f4f2f1; /* Matching your container background */
+      z-index: 0;
+    }
+
+    .main-content {
+      position: relative;
+      z-index: 10;
+    }
+  </style>
 </head>
-<body class="bg-white flex items-center justify-center h-screen">
-  <div class="bg-[#f4f2f1] p-8 rounded-xl shadow-md w-full max-w-md">
-    <h2 class="text-2xl font-bold text-[#171412] mb-4 text-center">Reset Password</h2>
-    <form method="POST">
-      <input type="email" name="email" required placeholder="Enter your registered email" class="w-full p-3 mb-4 rounded-lg bg-white text-[#171412] border border-gray-300" />
-      <button type="submit" class="w-full py-2 rounded-full bg-[#f3e2d2] font-bold text-[#171412] hover:bg-[#e2cbbb] transition">Send Reset Link</button>
-    </form>
+<body class="h-screen flex items-center justify-center">
+
+  <!-- Particle background -->
+  <div id="particles-js"></div>
+
+  <!-- Form container -->
+  <div class="main-content w-full max-w-md">
+    <div class="bg-[#f4f2f1] p-8 rounded-xl shadow-md">
+      <h2 class="text-2xl font-bold text-[#171412] mb-4 text-center">Reset Password</h2>
+      <form method="POST">
+        <input type="email" name="email" required placeholder="Enter your registered email"
+               class="w-full p-3 mb-4 rounded-lg bg-white text-[#171412] border border-gray-300" />
+        <button type="submit"
+                class="w-full py-2 rounded-full bg-[#f3e2d2] font-bold text-[#171412] hover:bg-[#e2cbbb] transition">
+          Send Reset Link
+        </button>
+      </form>
+    </div>
   </div>
+
+  <!-- Particle config -->
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 60 },
+        color: { value: "#888888" },  // darker gray particles
+        shape: { type: "circle" },
+        opacity: {
+          value: 0.8,  // more opaque
+          random: false
+        },
+        size: {
+          value: 4,
+          random: true
+        },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#999999",
+          opacity: 0.5,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 1.5,
+          direction: "none",
+          out_mode: "bounce"
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+          onclick: { enable: true, mode: "push" }
+        },
+        modes: {
+          repulse: { distance: 100 },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
+
 </body>
 </html>

@@ -4,21 +4,45 @@
   <meta charset="UTF-8" />
   <title>Admin Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 min-h-screen p-8" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
-  <div class="max-w-6xl mx-auto">
+  <style>
+    /* Background container for particles */
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      background-color: #0f172a; /* dark background for contrast */
+    }
+
+    /* Ensure main content appears above particle background */
+    .main-content {
+      position: relative;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-8 text-white" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+
+  <!-- Particle background -->
+  <div id="particles-js"></div>
+
+  <!-- Main content -->
+  <div class="max-w-6xl mx-auto main-content">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-3xl font-bold text-[#171412]">Admin Dashboard</h1>
+      <h1 class="text-3xl font-bold text-white">Admin Dashboard</h1>
       <div>
         <a href="/" class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm">Home</a>
-        <a href="{{ url_for('logout') }}" class="ml-4 text-red-500 hover:underline text-sm">Logout</a>
+        <a href="{{ url_for('logout') }}" class="ml-4 text-red-400 hover:underline text-sm">Logout</a>
       </div>
     </div>
 
-    <p class="text-sm text-gray-600 mb-4">Logged in as: <strong>{{ session.user }}</strong></p>
+    <p class="text-sm text-gray-300 mb-4">Logged in as: <strong>{{ session.user }}</strong></p>
 
-    <div class="bg-white p-6 rounded shadow">
+    <div class="bg-white text-black p-6 rounded shadow">
       <h2 class="text-xl font-semibold mb-4">All Sentiment Entries</h2>
       <div class="overflow-auto">
         <table class="w-full text-left border border-gray-300 text-sm">
@@ -55,6 +79,48 @@
     </div>
   </div>
 
+  <!-- particles.js config -->
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80 },
+        color: { value: "#ffffff" },
+        shape: { type: "circle" },
+        opacity: {
+          value: 0.7,
+          random: false
+        },
+        size: {
+          value: 3,
+          random: true
+        },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#ffffff",
+          opacity: 0.4,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 2,
+          direction: "none",
+          out_mode: "bounce"
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+          onclick: { enable: true, mode: "push" }
+        },
+        modes: {
+          repulse: { distance: 100 },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
 </body>
 </html>
-
