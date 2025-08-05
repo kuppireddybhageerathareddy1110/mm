@@ -17,11 +17,14 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 
-# MongoDB setup
-client = MongoClient(os.getenv("MONGODB_URI"))
-db = client["sentimentDB"]
-collection = db["results"]
-users = db["users"]
+try:
+    client = MongoClient(os.getenv("MONGODB_URI"))
+    db = client["sentimentDB"]
+    collection = db["results"]
+    users = db["users"]
+except Exception as e:
+    print("❌ MongoDB connection failed:", e)
+    raise e
 
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 
