@@ -12,20 +12,25 @@
       padding: 0;
       height: 100%;
     }
-
     #particles-js {
       position: fixed;
       width: 100%;
       height: 100%;
-      background-color: #ffffff; /* white background */
-      z-index: -1; /* Behind everything */
+      background-color: #ffffff;
+      z-index: -1;
       top: 0;
       left: 0;
     }
-
     .main-content {
       position: relative;
       z-index: 1;
+    }
+    iframe {
+      width: 100%;
+      height: 300px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 0.5rem;
     }
   </style>
 </head>
@@ -66,23 +71,30 @@
     <div class="max-w-2xl mx-auto bg-[#f4f2f1] p-6 rounded-xl shadow mb-10">
       <canvas id="sentimentChart"></canvas>
     </div>
-
+    
     <!-- Sentiment Entries -->
     <div class="max-w-3xl mx-auto">
       <h2 class="text-xl font-semibold mb-4">Recent Entries</h2>
-      <ul class="space-y-3">
+      <ul class="space-y-6">
         {% for entry in results %}
-        <li class="p-4 bg-[#f3e2d2] rounded-lg shadow text-[#171412] flex justify-between items-center">
-          <div>
-            <strong>{{ entry.sentiment }}</strong> —
-            Score: {{ "%.2f"|format(entry.polarity) }} |
-            "{{ entry.text | truncate(80, True) }}"
+        <li class="p-4 bg-[#f3e2d2] rounded-lg shadow text-[#171412]">
+          <div class="flex justify-between items-start">
+            <div>
+              <p><strong>{{ entry.sentiment }}</strong> — Score: {{ "%.2f"|format(entry.polarity) }}</p>
+              <p>"{{ entry.text | truncate(80, True) }}"</p>
+            </div>
+            <form method="POST" action="/delete/{{ entry._id }}" onsubmit="return confirm('Delete this entry?');">
+              <button type="submit" class="ml-4 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full text-sm">
+                Delete
+              </button>
+            </form>
           </div>
-          <form method="POST" action="/delete/{{ entry._id }}" onsubmit="return confirm('Delete this entry?');">
-            <button type="submit" class="ml-4 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full text-sm">
-              Delete
-            </button>
-          </form>
+          {% if entry.lime_html %}
+          <div class="mt-4">
+            <h3 class="text-md font-semibold">Explanation:</h3>
+            <iframe srcdoc="{{ entry.lime_html | safe }}"></iframe>
+          </div>
+          {% endif %}
         </li>
         {% else %}
         <li class="text-center text-gray-500 italic">No sentiment entries found.</li>
@@ -126,9 +138,9 @@
     particlesJS("particles-js", {
       particles: {
         number: { value: 80 },
-        color: { value: "#444444" }, // Dark visible particles
+        color: { value: "#444444" },
         shape: { type: "circle" },
-        opacity: { value: 0.9 },     // HIGH opacity for visibility
+        opacity: { value: 0.9 },
         size: { value: 3, random: true },
         line_linked: {
           enable: true,
