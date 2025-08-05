@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sentiment History</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-white px-6 py-10" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+
+  <h1 class="text-3xl font-bold text-center text-[#171412] mb-6">Sentiment History</h1>
+
+ <form method="POST" class="flex flex-wrap gap-4 justify-center mb-6">
+
+  <!-- Chart type -->
+  <select name="chart" class="rounded px-3 py-2 border border-gray-300">
+    <option value="bar" {% if chart_type == 'bar' %}selected{% endif %}>Bar Chart</option>
+    <option value="pie" {% if chart_type == 'pie' %}selected{% endif %}>Pie Chart</option>
+  </select>
+
+  <!-- Entry limit -->
+  <select name="limit" class="rounded px-3 py-2 border border-gray-300">
+    <option value="5" {% if limit == 5 %}selected{% endif %}>Last 5</option>
+    <option value="10" {% if limit == 10 %}selected{% endif %}>Last 10</option>
+    <option value="25" {% if limit == 25 %}selected{% endif %}>Last 25</option>
+  </select>
+
+  <!-- Sort by -->
+  <select name="sort_by" class="rounded px-3 py-2 border border-gray-300">
+    <option value="default">Default</option>
+    <option value="polarity" {% if sort_by == 'polarity' %}selected{% endif %}>Sort by Polarity</option>
+    <option value="sentiment" {% if sort_by == 'sentiment' %}selected{% endif %}>Sort by Sentiment</option>
+  </select>
+
+  <!-- Date range -->
+  <input type="date" name="start_date" value="{{ start_date }}" class="px-3 py-2 border border-gray-300 rounded">
+  <input type="date" name="end_date" value="{{ end_date }}" class="px-3 py-2 border border-gray-300 rounded">
+
+  <!-- Submit and Export -->
+  <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" type="submit">Filter</button>
+  <a href="/export_csv" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Export CSV</a>
+{% if session.user == 'admin@example.com' %}
+  <a href="/admin" class="text-sm text-blue-600 underline">Admin Dashboard</a>
+{% endif %}
+
+</form>
+
+  <!-- Chart -->
+  <div class="max-w-2xl mx-auto bg-[#f4f2f1] p-6 rounded-xl shadow mb-10">
+    <canvas id="sentimentChart"></canvas>
+  </div>
+
+  <!-- Sentiment Entries -->
+  <div class="max-w-3xl mx-auto">
+    <h2 class="text-xl font-semibold mb-4">Recent Entries</h2>
+    <ul class="space-y-3">
+      {% for entry in results %}
+        <li class="p-4 bg-[#f3e2d2] rounded-lg shadow text-[#171412] flex justify-between items-center">
+          <div>
+            <strong>{{ entry.sentiment }}</strong> —
+            Score: {{ "%.2f"|format(entry.polarity) }} |
+            "{{ entry.text | truncate(80, True) }}"
+          </div>
+          <form method="POST" action="/delete/{{ entry._id }}" onsubmit="return confirm('Delete this entry?');">
+            <button type="submit" class="ml-4 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full text-sm">
+              Delete
+            </button>
+          </form>
+        </li>
+      {% else %}
+        <li class="text-center text-gray-500 italic">No sentiment entries found.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <script>
+  const ctx = document.getElementById('sentimentChart').getContext('2d');
+  const chartType = "{{ chart_type }}";
+  const labels = {{ labels | tojson }};
+  const values = {{ values | tojson }};
+
+  const config = {
+    type: chartType,
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: ['#34d399', '#f87171', '#fbbf24'], // green, red, yellow
+        borderColor: '#fff',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true },
+        title: {
+          display: true,
+          text: 'Sentiment Analysis Summary'
+        }
+      }
+    }
+  };
+
+  new Chart(ctx, config);
+</script>
+
+</body>
+</html>

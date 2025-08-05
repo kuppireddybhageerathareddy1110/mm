@@ -1,0 +1,14 @@
+body {
+    background: url("images/background.jpg") no-repeat center center fixed;
+    background-size: cover;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    text-align: center;
+    padding: 50px;
+}
+
+textarea {
+    width: 60%;
+    padding: 10px;
+    font-size: 16px;
+}

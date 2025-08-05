@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentiment Analyzer</title>
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #f7f3f0, #fdfaf8);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center px-4 py-10">
+  <main class="max-w-xl w-full bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-[#ece2dc]">
+    <!-- Header -->
+    <div class="flex flex-col items-center justify-between gap-2 mb-6">
+      <h1 class="text-4xl font-extrabold text-[#2e2a27] text-center">Sentiment Analyzer</h1>
+      <p class="text-sm text-gray-500 text-center">Analyze your thoughts instantly</p>
+    </div>
+
+    <!-- User Info -->
+    <div class="bg-[#f9f6f4] p-4 rounded-xl border border-[#e0d6cf] shadow mb-6">
+      <p class="text-gray-700"><strong>Logged in as:</strong> {{ session['user'] }}</p>
+      <div class="mt-2 flex justify-start gap-4 text-sm">
+        <a href="{{ url_for('logout') }}" class="text-red-600 font-medium hover:underline">Logout</a>
+        {% if session['user'] == admin_email %}
+  <a href="{{ url_for('admin_dashboard') }}" class="text-blue-500 hover:underline">Admin Dashboard</a>
+{% endif %}
+
+        <a href="{{ url_for('history') }}" class="text-emerald-600 font-medium hover:underline">View History</a>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form method="POST" action="/" class="space-y-4">
+      <label for="text" class="block text-sm font-medium text-gray-700">Enter your text</label>
+      <textarea
+        id="text"
+        name="text"
+        required
+        placeholder="How are you feeling today? Share your thoughts..."
+        class="w-full p-4 rounded-xl bg-white border border-gray-300 shadow-sm text-gray-800 min-h-[160px] resize-none focus:outline-none focus:ring-2 focus:ring-[#e2cbbb] focus:border-transparent"
+      ></textarea>
+
+      <button
+        type="submit"
+        class="w-full h-12 rounded-full bg-[#e2cbbb] text-[#171412] font-bold hover:bg-[#d5b8a3] transition duration-200 shadow-md"
+      >
+        Analyze Sentiment
+      </button>
+    </form>
+  </main>
+</body>
+</html>
