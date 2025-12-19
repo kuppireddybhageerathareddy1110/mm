@@ -42,6 +42,13 @@
   <!-- Main content -->
   <div class="main-content px-6 py-10">
     <h1 class="text-3xl font-bold text-center text-[#171412] mb-6">Sentiment History</h1>
+     <div class="mb-6 flex justify-start">
+  <a href="{{ url_for('index') }}"
+     class="inline-flex items-center gap-2 bg-gray-200 hover:bg-gray-300
+            text-gray-800 px-4 py-2 rounded-lg shadow text-sm font-medium">
+    ← Back to Analyze
+  </a>
+</div>
 
     <form method="POST" class="flex flex-wrap gap-4 justify-center mb-6">
       <select name="chart" class="rounded px-3 py-2 border border-gray-300">
