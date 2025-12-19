@@ -1,204 +1,274 @@
-```markdown
+
+
 <div align="center">
-  <h1>🧠 Sentiment Analysis Web App with LIME Interpretability</h1>
-  <p>A full-stack web application for sentiment analysis with secure authentication, MongoDB storage, and LIME-powered explainability.</p>
-  <img src="https://img。上img.shields.io/badge/Flask-2.0.1-green" alt="Flask">
-  <img src="https://img.shields.io/badge/MongoDB-Atlas-blue" alt="MongoDB">
-  <img src="https://img.shields.io/badge/LIME-Interpretability-orange" alt="LIME">
-  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="MIT License">
+
+# 🧠 Sentiment Analysis Web App with LIME Explainability
+
+A full-stack Flask web application for sentiment analysis with secure authentication, MongoDB persistence, and **LIME-based model interpretability**.
+
+**Live Demo:** 👉 https://mm-2-p6uy.onrender.com/
+
+![Flask](https://img.shields.io/badge/Flask-Python-green)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-brightgreen)
+![ML](https://img.shields.io/badge/ML-TextBlob%20%7C%20LIME-orange)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
 </div>
 
 ---
 
-## 🌟 Overview
+## 📌 Overview
 
-This **Sentiment Analysis Web App** is a full-stack application built with **Flask**, **MongoDB**, and **TextBlob**, featuring **LIME** for interpretable sentiment predictions. Users can register, log in, analyze text sentiment, view visual explanations, track their analysis history with interactive charts, and export results as CSV. Admins can manage all submissions via a dedicated dashboard.
+This **Sentiment Analysis Web App** allows users to analyze text sentiment using **TextBlob**, understand predictions through **LIME explanations**, and track their sentiment history over time.
 
----
-
-## ✨ Key Features
-
-- 🔐 **User Authentication**: Secure registration, login, and logout.
-- 💬 **Sentiment Analysis**: Powered by [TextBlob](https://textblob.readthedocs.io/) for accurate predictions.
-- 🔍 **LIME Interpretability**: Highlights key words driving sentiment predictions.
-- 📊 **Interactive Charts**: Visualize sentiment distribution with Chart.js.
-- 📂 **MongoDB Storage**: Store user submissions and history in MongoDB Atlas.
-- 🧾 **CSV Export**: Download analysis history as a CSV file.
-- 👮 **Admin Dashboard**: View and delete all user submissions.
-- 🎨 **Dynamic UI**: Enhanced with Particles.js for a modern, engaging interface.
+The application is built using **Flask** for the backend, **MongoDB Atlas** for persistence, and a modern UI powered by **Tailwind CSS**, **Chart.js**, and **Particles.js**.
 
 ---
 
-## 🚀 Live Demo
+## ✨ Features
 
-Deploy the app on:
-- **Vercel** (recommended, see deployment instructions below)
-- **Render**, **Railway**, or **Heroku**
-- Run **locally** (see installation instructions)
+- 🔐 **User Authentication**
+  - Register, Login, Logout
+- 💬 **Sentiment Analysis**
+  - Positive / Negative / Neutral classification using TextBlob
+- 🔍 **Explainable AI (XAI)**
+  - LIME explanations highlighting influential words
+- 📊 **Interactive Charts**
+  - Bar / Pie charts for sentiment distribution
+- 🗂 **History Tracking**
+  - View previous analyses with explanations
+- 📤 **CSV Export**
+  - Download sentiment history as CSV
+- 👮 **Admin Dashboard**
+  - View and delete all user submissions
+- 🎨 **Modern UI**
+  - Tailwind CSS + Particles.js
 
-*Demo link: [Coming soon!]*
+---
+
+## 🚀 Live Application
+
+🌐 **Production URL:**  
+👉 https://mm-2-p6uy.onrender.com/
 
 ---
 
 ## 🛠 Tech Stack
 
-| **Category**            | **Technologies**                        |
-|-------------------------|-----------------------------------------|
-| **Frontend**            | HTML, Tailwind CSS, Chart.js, Jinja2    |
-| **Backend**             | Flask (Python)                         |
-| **ML/Interpretability** | TextBlob, LIME, Scikit-learn           |
-| **Database**            | MongoDB Atlas                          |
-
----
-
-## 📋 Prerequisites
-
-- **Python**: 3.8 or higher
-- **MongoDB**: Cloud (Atlas) or local instance
-- **Virtualenv** or **Conda** for dependency management
-
----
-
-## 📦 Installation
-
-Set up the project locally with these steps:
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/your-username/sentiment-lime-app.git
-cd sentiment-lime-app
-
-# 2. Create and activate a virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Set up environment variables
-cp .env.example .env
-# Edit .env with your MongoDB URI and admin email
-
-# 5. Run the application
-python app.py
-```
-
-Open your browser and visit `http://localhost:5000`.
-
----
-
-## ⚙️ Environment Variables
-
-Create a `.env` file in the project root with:
-
-```env
-SECRET_KEY=your-secret-key
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/sentimentDB
-ADMIN_EMAIL=admin@example.com
-```
-
-*Note*: Generate a secure `SECRET_KEY` (e.g., `python -c "import secrets; print(secrets.token_hex(16))"`) and obtain your `MONGODB_URI` from [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+| Layer | Technologies |
+|------|-------------|
+| Frontend | HTML, Tailwind CSS, Chart.js, Jinja2 |
+| Backend | Flask (Python) |
+| ML / XAI | TextBlob, Scikit-learn, LIME |
+| Database | MongoDB Atlas |
+| Deployment | Render (Gunicorn) |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-sentiment-lime-app/
-├── static/                 # CSS, JavaScript, images
-│   ├── css/               # Tailwind CSS and custom styles
-│   ├── js/                # Chart.js, Particles.js
-│   └── images/            # Screenshots and assets
-├── templates/             # HTML templates
-│   ├── index.html        # Home page
-│   ├── login.html        # Login page
-│   ├── register.html     # Registration page
-│   ├── results.html      # Sentiment analysis results
-│   ├── history.html      # User history with charts
-│   └── admin.html        # Admin dashboard
-├── app.py                # Main Flask application
-├── requirements.txt      # Python dependencies
-├── .env.example         # Template for environment variables
-└── README.md            # Project documentation
+
+mm/
+├── app.py                  # Main Flask application
+├── templates/              # HTML templates
+│   ├── index.html
+│   ├── login.html
+│   ├── register.html
+│   ├── results.html
+│   ├── history.html
+│   └── admin.html
+├── static/                 # CSS, JS, assets
+├── requirements.txt        # Python dependencies
+├── Procfile                # Gunicorn start command
+├── .env.example            # Environment variable template
+└── README.md               # Documentation
+
+````
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+SECRET_KEY=your_secret_key
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/sentimentDB
+ADMIN_EMAIL=admin@example.com
+````
+
+> ⚠️ **Do not commit `.env` to GitHub**
+> Use `.gitignore` to protect secrets.
+
+---
+
+## 🧪 Local Setup
+
+```bash
+# Clone repository
+git clone https://github.com/kuppireddybhageerathareddy1110/mm.git
+cd mm
+
+# Create virtual environment
+python -m venv venv
+venv\Scripts\activate   # Windows
+# source venv/bin/activate  # Linux/Mac
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run application
+python app.py
 ```
 
----
-
-## 🖼 Screenshots
-
-| **Sentiment Result with LIME** | **History and Charts** |
-|-------------------------------|-----------------------|
-| ![Result](screenshots/result.png) | ![History](screenshots/history.png) |
+Visit:
+👉 [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
 ---
 
-## 📤 Export to CSV
+## 🧠 Explainable AI with LIME
 
-Users can download their sentiment analysis history as a CSV file from the `/history` page by clicking the **Export CSV** button.
+The app uses **LIME (Local Interpretable Model-Agnostic Explanations)** to:
+
+* Highlight words contributing to sentiment predictions
+* Provide transparent, human-understandable explanations
+* Improve trust in ML decisions
+
+> To ensure production stability, LIME explanations are generated **only when sufficient sentiment class diversity exists**.
+
+---
+
+## 📊 Charts & Analytics
+
+* Sentiment distribution visualized using **Chart.js**
+* Supports:
+
+  * Bar Chart
+  * Pie Chart
+* Filters:
+
+  * Entry limit
+  * Sorting
+  * Date range
 
 ---
 
 ## 👮 Admin Dashboard
 
-- Accessible to the user with the email specified in `ADMIN_EMAIL` in `.env`.
-- Features:
-  - View all user submissions.
-  - Delete individual entries.
+* Accessible only to the email specified in `ADMIN_EMAIL`
+* Features:
+
+  * View all user submissions
+  * Delete inappropriate or test entries
 
 ---
 
-## 🤖 LIME Explanations
+## 🧯 Production Stability
 
-**LIME** (Local Interpretable Model-Agnostic Explanations) highlights influential words in sentiment predictions. Explanations are displayed as interactive HTML outputs in:
-- `results.html`: After each prediction.
-- `history.html`: Below each historical entry.
-
----
-
-## 🚀 Deployment on Vercel
-
-To deploy on Vercel:
-
-1. Push your repository to GitHub.
-2. Sign into [Vercel](https://vercel.com) and import the repository.
-3. Configure the project:
-   - **Framework Preset**: Other (Python).
-   - **Build Command**: `pip install -r requirements.txt`.
-   - **Output Directory**: Leave blank.
-   - **Install Command**: Leave blank.
-4. Add environment variables in Vercel’s dashboard (same as `.env`).
-5. Deploy and test the app.
-
-*Note*: Ensure `app.py` is compatible with Vercel’s serverless functions (e.g., use `vercel-python`). See [Vercel Python Docs](https://vercel.com/docs/runtimes#python) for details.
+* Safe handling of single-class ML data
+* No model training crashes in production
+* Graceful fallback when LIME explanations are unavailable
 
 ---
 
-## 🌱 Future Improvements
+## 🌱 Future Enhancements
 
-- 🌍 Support multilingual sentiment analysis.
-- 🧠 Integrate advanced models like BERT or LSTM.
-- 🔗 Add social login (Google, GitHub).
-- 📄 Implement pagination and filtering on the history page.
-- 📈 Enable real-time chart updates.
+* Multilingual sentiment support
+* Transformer models (BERT)
+* Pagination for history
+* User analytics dashboard
+* OAuth login (Google / GitHub)
 
 ---
 
 ## 📝 License
 
-This project is licensed under the **MIT License**. Feel free to use, modify, and distribute with attribution.
+This project is licensed under the **MIT License**.
 
 ---
 
 ## 👤 Author
 
-**Your Name**  
-- GitHub: [@yourhandle](https://github.com/your-username)  
-- Email: your.email@example.com
+**Kuppireddy Bhageeratha Reddy**
+
+* GitHub: [https://github.com/kuppireddybhageerathareddy1110](https://github.com/kuppireddybhageerathareddy1110)
+* Live App: [https://mm-2-p6uy.onrender.com/](https://mm-2-p6uy.onrender.com/)
 
 ---
 
 <div align="center">
-  <p>Built with ❤️ using Flask, MongoDB, and LIME</p>
-  <p>Star ⭐ the repo if you find it useful!</p>
+
+Built with ❤️ using **Flask, MongoDB, and Explainable AI**
+
+⭐ Star the repository if you find it useful
+
 </div>
 ```
+
+---
+
+# 🏗️ Architecture Diagram
+
+Add this section **after the “Tech Stack” section**.
+
+---
+
+## 🏗️ System Architecture
+
+The application follows a **classic three-tier architecture** with an explainable ML layer integrated into the backend.
+
+```mermaid
+flowchart LR
+    User[Browser / Client]
+    UI[HTML + Tailwind CSS + Chart.js]
+    Flask[Flask Application]
+    ML[TextBlob + LIME]
+    DB[(MongoDB Atlas)]
+    Render[Render Cloud]
+
+    User --> UI
+    UI --> Flask
+    Flask --> ML
+    Flask --> DB
+    DB --> Flask
+    Flask --> UI
+    Flask --> Render
+```
+
+### 🔍 Architecture Explanation
+
+* **Client Layer**
+
+  * Browser-based UI using HTML, Tailwind CSS, Chart.js, and Particles.js
+  * Sends user input via HTTP requests
+
+* **Application Layer (Flask)**
+
+  * Handles routing, authentication, session management
+  * Executes sentiment analysis logic
+  * Triggers LIME explanations conditionally
+
+* **ML / Explainability Layer**
+
+  * **TextBlob**: Sentiment polarity calculation
+  * **Scikit-learn + Logistic Regression**: Lightweight classifier for LIME
+  * **LIME**: Explains word-level influence on sentiment
+
+* **Database Layer**
+
+  * MongoDB Atlas stores:
+
+    * User credentials
+    * Sentiment results
+    * LIME HTML explanations
+    * Timestamps and metadata
+
+* **Deployment Layer**
+
+  * Hosted on **Render**
+  * Served via **Gunicorn (WSGI)**
+
+---
+
+
