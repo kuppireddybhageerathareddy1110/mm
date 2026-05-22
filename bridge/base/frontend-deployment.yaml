@@ -1,0 +1,32 @@
+#! frontend-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: frontend
+    namespace: new-one-1
+    labels:
+        com.docker.compose.project: new-one-1
+        com.docker.compose.service: frontend
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: new-one-1
+            com.docker.compose.service: frontend
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: new-one-1
+                com.docker.compose.service: frontend
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: mm-frontend
+                  image: new-one-1-frontend
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                    - name: frontend-3000
+                      containerPort: 3000

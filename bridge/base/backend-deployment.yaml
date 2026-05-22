@@ -1,0 +1,45 @@
+#! backend-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: backend
+    namespace: new-one-1
+    labels:
+        com.docker.compose.project: new-one-1
+        com.docker.compose.service: backend
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: new-one-1
+            com.docker.compose.service: backend
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: new-one-1
+                com.docker.compose.service: backend
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: mm-backend
+                  image: new-one-1-backend
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: ADMIN_EMAIL
+                      value: "admin@example.com"
+                    - name: GOOGLE_CLIENT_ID
+                      value: "your-google-client-id"
+                    - name: GOOGLE_CLIENT_SECRET
+                      value: "your-google-client-secret"
+                    - name: MONGODB_URI
+                      value: "mongodb://host.docker.internal:27017"
+                    - name: NEXT_PUBLIC_API_URL
+                      value: "http://backend:8000"
+                    - name: SECRET_KEY
+                      value: "d93f2a1b5a2f4c3a9f17e7a3e5db2cf347e6b989df09e3c1d84a92c6cb2aa8b4"
+                  ports:
+                    - name: backend-8000
+                      containerPort: 8000
