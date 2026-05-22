@@ -14,10 +14,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 
 from textblob import TextBlob
-from lime.lime_text import LimeTextExplainer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import make_pipeline
+try:
+    from lime.lime_text import LimeTextExplainer
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.pipeline import make_pipeline
+    HAS_LIME = True
+except ImportError:
+    HAS_LIME = False
 
 # -------------------- ENV --------------------
 load_dotenv()
@@ -93,7 +97,15 @@ def index():
             lime_html = None
 
             # Train ONLY if at least 2 classes exist
-            if len(set(sample_labels)) >= 2:
+            if not HAS_LIME:
+                lime_html = (
+                    "<div style='padding: 12px; background: rgba(243, 156, 18, 0.1); border: 1px solid #f39c12; border-radius: 6px; color: #f39c12; font-family: sans-serif; font-size: 14px; line-height: 1.5;'>"
+                    "<strong>LIME Explanation Unavailable:</strong> The <code>scikit-learn</code> and <code>lime</code> packages are not "
+                    "installed in this environment (likely due to Python 3.14 compatibility). "
+                    "The core sentiment scoring and history features remain fully functional!"
+                    "</div>"
+                )
+            elif len(set(sample_labels)) >= 2:
                 pipeline = make_pipeline(
                     TfidfVectorizer(),
                     LogisticRegression(max_iter=1000)

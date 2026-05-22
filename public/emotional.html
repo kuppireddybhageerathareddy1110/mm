@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotional Crystallization — Sentiment Studio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #07070a;
+            --bg-sidebar: rgba(13, 13, 20, 0.65);
+            --border-glow: rgba(255, 255, 255, 0.08);
+            --text-primary: #f2f2f7;
+            --text-secondary: #a0a0b8;
+            --accent-orange: #ff7e5f;
+            --accent-gold: #ffb800;
+            --accent-rose: #ff3c64;
+            --accent-cyan: #00d2ff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg-dark); min-height: 100vh; color: var(--text-primary); overflow: hidden; position: relative; }
+        .ambient-glow-1, .ambient-glow-2 { position: absolute; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(255, 184, 0, 0.04) 0%, rgba(0, 0, 0, 0) 70%); pointer-events: none; z-index: 0; }
+        .ambient-glow-1 { top: -20%; left: 20%; }
+        .ambient-glow-2 { bottom: -20%; right: 10%; background: radial-gradient(circle, rgba(0, 210, 255, 0.04) 0%, rgba(0, 0, 0, 0) 70%); }
+        .container { display: flex; min-height: 100vh; padding: 20px; gap: 24px; position: relative; z-index: 1; }
+        .sidebar { width: 320px; background: var(--bg-sidebar); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 28px; border-radius: 18px; border: 1px solid var(--border-glow); box-shadow: 0 20px 50px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow-y: auto; max-height: calc(100vh - 40px); }
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .back-link { display: inline-flex; align-items: center; color: var(--text-secondary); text-decoration: none; font-size: 12px; font-weight: 500; margin-bottom: 20px; gap: 6px; transition: all 0.3s ease; }
+        .back-link:hover { color: var(--accent-cyan); transform: translateX(-3px); text-shadow: 0 0 8px rgba(0,210,255,0.4); }
+        .sidebar h1 { font-family: 'Lora', serif; font-size: 24px; margin-bottom: 8px; background: linear-gradient(135deg, #ffffff 0%, #b8b8d0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+        .subtitle { color: var(--text-secondary); font-size: 13px; margin-bottom: 24px; line-height: 1.5; font-weight: 300; }
+        .badge { font-size: 10px; padding: 4px 8px; border-radius: 99px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+        .badge-pos { background: rgba(255,184,0,0.1); color: var(--accent-gold); border: 1px solid rgba(255,184,0,0.2); }
+        .badge-neg { background: rgba(255,60,100,0.1); color: var(--accent-rose); border: 1px solid rgba(255,60,100,0.2); }
+        .badge-neu { background: rgba(0,210,255,0.1); color: var(--accent-cyan); border: 1px solid rgba(0,210,255,0.2); }
+        .control-section { margin-bottom: 24px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; }
+        .control-section h3 { font-size: 12px; font-weight: 600; color: #fff; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .control-section h3::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-orange); box-shadow: 0 0 8px var(--accent-orange); }
+        .seed-input { width: 100%; background: rgba(255,255,255,0.03); padding: 10px 12px; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 14px; color: #fff; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.06); text-align: center; transition: all 0.3s ease; }
+        .seed-input:focus { outline: none; border-color: var(--accent-cyan); background: rgba(255,255,255,0.06); box-shadow: 0 0 12px rgba(0,210,255,0.25); }
+        .seed-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        .control-group label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 400; color: var(--text-secondary); margin-bottom: 6px; }
+        .slider-container { display: flex; align-items: center; gap: 10px; }
+        .slider-container input[type="range"] { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; outline: none; -webkit-appearance: none; transition: background 0.3s ease; }
+        .slider-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #fff; border-radius: 50%; cursor: pointer; box-shadow: 0 0 8px rgba(255,255,255,0.8); transition: transform 0.2s ease, background-color 0.2s ease; }
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.3); background: var(--accent-cyan); box-shadow: 0 0 12px var(--accent-cyan); }
+        .value-display { font-family: 'Outfit', sans-serif; font-size: 11px; color: var(--text-primary); font-weight: 600; min-width: 32px; text-align: right; }
+        .button-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        button { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 9px 12px; font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; color: #fff; transition: all 0.25s cubic-bezier(0.4,0,0.2,1); }
+        button:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); transform: translateY(-1px); }
+        button.primary { background: linear-gradient(135deg, var(--accent-orange) 0%, #e05e3f 100%); color: white; border: none; font-weight: 600; box-shadow: 0 4px 15px rgba(255,126,95,0.25); }
+        button.primary:hover { box-shadow: 0 6px 20px rgba(255,126,95,0.4); transform: translateY(-1px); filter: brightness(1.1); }
+        .canvas-area { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        #canvas-container { position: relative; }
+        #canvas-container::before { content: ''; position: absolute; top: 2%; left: 2%; right: 2%; bottom: 2%; background: transparent; border-radius: 14px; box-shadow: 0 30px 100px rgba(0,210,255,0.18), 0 20px 60px rgba(255,60,100,0.12), 0 -20px 60px rgba(255,184,0,0.12); z-index: -1; pointer-events: none; }
+        #canvas-container canvas { border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); display: block; }
+        .philosophy-note { margin-top: auto; padding: 14px; background: rgba(255,255,255,0.02); border-radius: 10px; border-left: 3px solid var(--accent-orange); font-size: 11px; color: var(--text-secondary); line-height: 1.6; font-family: 'Lora', serif; font-style: italic; }
+    </style>
+</head>
+<body>
+<div class="ambient-glow-1"></div>
+<div class="ambient-glow-2"></div>
+<div class="container">
+    <div class="sidebar">
+        <a href="http://127.0.0.1:3001" class="back-link">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Sentiment Studio
+        </a>
+        <h1>Emotional Crystallization</h1>
+        <p class="subtitle">Words as particles drifting toward sentiment attractors — a generative map of language's emotional charge.</p>
+        <div class="badges">
+            <span class="badge badge-pos">Positive</span>
+            <span class="badge badge-neg">Negative</span>
+            <span class="badge badge-neu">Neutral</span>
+        </div>
+        <div class="control-section">
+            <h3>Seed</h3>
+            <input type="number" class="seed-input" id="seed-input" value="12345" onchange="updateSeed()">
+            <div class="seed-controls">
+                <button onclick="previousSeed()">← Prev</button>
+                <button onclick="nextSeed()">Next →</button>
+            </div>
+            <button style="width:100%;margin-bottom:7px" onclick="randomSeedAndUpdate()">⚄ Random Seed</button>
+        </div>
+        <div class="control-section">
+            <h3>Particles</h3>
+            <div class="control-group">
+                <label>Word Count <span id="particleCount-value">3000</span></label>
+                <div class="slider-container"><input type="range" id="particleCount" min="500" max="6000" step="100" value="3000" oninput="updateParam('particleCount', +this.value)"><span class="value-display" id="particleCount-display"></span></div>
+            </div>
+            <div class="control-group">
+                <label>Attractor Strength <span id="attractStrength-value">0.04</span></label>
+                <div class="slider-container"><input type="range" id="attractStrength" min="0.005" max="0.12" step="0.005" value="0.04" oninput="updateParam('attractStrength', +this.value)"><span class="value-display" id="attractStrength-display"></span></div>
+            </div>
+            <div class="control-group">
+                <label>Turbulence <span id="turbulence-value">0.007</span></label>
+                <div class="slider-container"><input type="range" id="turbulence" min="0.001" max="0.025" step="0.001" value="0.007" oninput="updateParam('turbulence', +this.value)"><span class="value-display" id="turbulence-display"></span></div>
+            </div>
+            <div class="control-group">
+                <label>Decay Rate <span id="decay-value">0.025</span></label>
+                <div class="slider-container"><input type="range" id="decay" min="0.005" max="0.08" step="0.005" value="0.025" oninput="updateParam('decay', +this.value)"><span class="value-display" id="decay-display"></span></div>
+            </div>
+        </div>
+        <div class="control-section">
+            <h3>Field</h3>
+            <div class="control-group">
+                <label>Attractor Spread <span id="spread-value">0.28</span></label>
+                <div class="slider-container"><input type="range" id="spread" min="0.15" max="0.45" step="0.01" value="0.28" oninput="updateParam('spread', +this.value)"><span class="value-display" id="spread-display"></span></div>
+            </div>
+            <div class="control-group">
+                <label>Repulsion Zone <span id="repulsion-value">35</span></label>
+                <div class="slider-container"><input type="range" id="repulsion" min="10" max="80" step="5" value="35" oninput="updateParam('repulsion', +this.value)"><span class="value-display" id="repulsion-display"></span></div>
+            </div>
+            <div class="control-group">
+                <label>Orbit Wobble <span id="wobble-value">0.45</span></label>
+                <div class="slider-container"><input type="range" id="wobble" min="0" max="1.2" step="0.05" value="0.45" oninput="updateParam('wobble', +this.value)"><span class="value-display" id="wobble-display"></span></div>
+            </div>
+        </div>
+        <div class="control-section" style="margin-bottom: 16px;">
+            <h3>Actions</h3>
+            <div class="button-row">
+                <button class="primary" onclick="initializeSystem()">Regenerate</button>
+                <button onclick="resetParameters()">Reset</button>
+            </div>
+            <button style="width:100%" onclick="downloadPNG()">⬇ Download PNG</button>
+        </div>
+        <div class="philosophy-note">
+            "Three invisible attractors define the field: Positive, Negative, Neutral. Particles spiral inward through competing forces, crystallizing into regions of emotional density."
+        </div>
+    </div>
+    <div class="canvas-area">
+        <div id="canvas-container"></div>
+    </div>
+</div>
+<script>
+let params = { seed: 12345, particleCount: 3000, attractStrength: 0.04, turbulence: 0.007, decay: 0.025, spread: 0.28, repulsion: 35, wobble: 0.45 };
+let defaultParams = {...params};
+let attractors = [];
+let particles = [];
+let frameCount = 0;
+let pg;
+new p5(function(p){
+    p.setup = function(){
+        let sz = Math.min(window.innerWidth - 360, window.innerHeight - 40, 780);
+        sz = Math.max(sz, 480);
+        let canvas = p.createCanvas(sz, sz);
+        canvas.parent('canvas-container');
+        p.pixelDensity(1);
+        pg = p.createGraphics(sz, sz);
+        pg.pixelDensity(1);
+        initializeSystem();
+    };
+    function initializeSystem(){
+        p.randomSeed(params.seed);
+        p.noiseSeed(params.seed);
+        frameCount = 0;
+        let W = p.width, H = p.height;
+        let cx = W/2, cy = H/2;
+        let spread = params.spread;
+        attractors = [
+            { x: cx + W*spread, y: cy - H*spread*0.6, r:255,g:184,b:0, label:'Positive', polarity:1.0 },
+            { x: cx - W*spread, y: cy - H*spread*0.6, r:255,g:60,b:100, label:'Negative', polarity:-1.0 },
+            { x: cx, y: cy + H*spread*0.8, r:0,g:210,b:255, label:'Neutral', polarity:0.0 }
+        ];
+        pg.background(8,8,12);
+        particles = [];
+        for(let i=0;i<params.particleCount;i++){
+            let px = p.random(W), py = p.random(H);
+            let noiseVal = p.noise(px*0.003, py*0.003, params.seed*0.01);
+            let polarity = (noiseVal-0.5)*2;
+            particles.push({x:px,y:py,vx:(p.random()-0.5)*0.8,vy:(p.random()-0.5)*0.8,polarity,life:p.random(0.6,1.0),age:0,noiseOffset:p.random(1000)});
+        }
+    }
+    window.initializeSystem = initializeSystem;
+    p.draw = function(){
+        p.image(pg,0,0);
+        p.background(8,8,12,8);
+        frameCount++;
+        let W = p.width, H = p.height;
+        let maxAge = 280;
+        for(let i=particles.length-1;i>=0;i--){
+            let pt = particles[i];
+            pt.age++;
+            let noiseAngle = p.noise(pt.x*params.turbulence, pt.y*params.turbulence, pt.noiseOffset+frameCount*0.002)*p.TWO_PI*4;
+            let turbX = Math.cos(noiseAngle)*params.wobble;
+            let turbY = Math.sin(noiseAngle)*params.wobble;
+            let totalFx = turbX, totalFy = turbY;
+            let closestDist = Infinity, closestAttractor = attractors[2];
+            for(let att of attractors){
+                let dx = att.x-pt.x, dy = att.y-pt.y;
+                let dist = Math.sqrt(dx*dx+dy*dy);
+                if(dist<closestDist){closestDist=dist;closestAttractor=att;}
+                let affinity = 1-Math.abs(pt.polarity-att.polarity)*0.6;
+                affinity = Math.max(0.15, affinity);
+                if(dist<params.repulsion){
+                    let rep = (params.repulsion-dist)/params.repulsion;
+                    totalFx -= (dx/dist)*rep*0.8;
+                    totalFy -= (dy/dist)*rep*0.8;
+                } else {
+                    let strength = params.attractStrength*affinity/(dist*0.015+1);
+                    totalFx += (dx/dist)*strength;
+                    totalFy += (dy/dist)*strength;
+                }
+            }
+            pt.vx = (pt.vx+totalFx)*(1-params.decay);
+            pt.vy = (pt.vy+totalFy)*(1-params.decay);
+            let speed = Math.sqrt(pt.vx*pt.vx+pt.vy*pt.vy);
+            if(speed>3.5){pt.vx*=3.5/speed; pt.vy*=3.5/speed;}
+            let prevX=pt.x, prevY=pt.y;
+            pt.x+=pt.vx; pt.y+=pt.vy;
+            let lifeFrac = 1-pt.age/maxAge;
+            let posR=closestAttractor.r, posG=closestAttractor.g, posB=closestAttractor.b;
+            let polR, polG, polB;
+            if(pt.polarity>0){
+                polR=p.lerp(0,255,pt.polarity);
+                polG=p.lerp(210,184,pt.polarity);
+                polB=p.lerp(255,0,pt.polarity);
+            } else {
+                polR=p.lerp(0,255,-pt.polarity);
+                polG=p.lerp(210,60,-pt.polarity);
+                polB=p.lerp(255,100,-pt.polarity);
+            }
+            let blendT = Math.min(closestDist/(W*0.35),1);
+            let r = p.lerp(posR, polR, blendT*0.5);
+            let g = p.lerp(posG, polG, blendT*0.5);
+            let b = p.lerp(posB, polB, blendT*0.5);
+            let speedFactor = Math.min(speed/2.5,1);
+            let alpha = lifeFrac*(0.35+speedFactor*0.65)*255;
+            pg.stroke(r,g,b,alpha*0.6);
+            pg.strokeWeight(speedFactor*1.5+0.4);
+            pg.line(prevX, prevY, pt.x, pt.y);
+            p.noStroke();
+            p.fill(r,g,b,alpha*0.9);
+            p.circle(pt.x,pt.y,speedFactor*2.5+0.6);
+            if(pt.age>maxAge||pt.x<0||pt.x>W||pt.y<0||pt.y>H){
+                let spx=p.random(W), spy=p.random(H);
+                let noiseVal=p.noise(spx*0.003, spy*0.003, (frameCount+params.seed)*0.005);
+                pt.x=spx; pt.y=spy; pt.vx=(p.random()-0.5)*0.8; pt.vy=(p.random()-0.5)*0.8; pt.polarity=(noiseVal-0.5)*2; pt.age=0; pt.noiseOffset=p.random(1000);
+            }
+        }
+        p.noStroke();
+        p.textFont('Outfit');
+        for(let att of attractors){
+            let glow = Math.abs(Math.sin(frameCount*0.025))*40+30;
+            p.fill(att.r, att.g, att.b, glow);
+            p.textSize(10);
+            p.textAlign(p.CENTER);
+            p.text(att.label.toUpperCase(), att.x, att.y-10);
+            p.fill(att.r, att.g, att.b, 80+glow*1.5);
+            p.circle(att.x, att.y, 8);
+        }
+        if(frameCount>900) p.noLoop();
+    };
+    p.mousePressed = function(){ if(p.frameCount>900) p.loop(); };
+    window.downloadPNG = function(){ p.saveCanvas('emotional-crystallization-seed-'+params.seed,'png'); };
+});
+function updateParam(name,value){ params[name]=value; document.getElementById(name+'-value').textContent=value; initializeSystem(); }
+function updateSeedDisplay(){ document.getElementById('seed-input').value=params.seed; }
+function updateSeed(){ let v=parseInt(document.getElementById('seed-input').value); if(v>0){ params.seed=v; initializeSystem(); } }
+function previousSeed(){ params.seed=Math.max(1,params.seed-1); updateSeedDisplay(); initializeSystem(); }
+function nextSeed(){ params.seed++; updateSeedDisplay(); initializeSystem(); }
+function randomSeedAndUpdate(){ params.seed=Math.floor(Math.random()*999999)+1; updateSeedDisplay(); initializeSystem(); }
+function resetParameters(){ params={...defaultParams}; let ids=['particleCount','attractStrength','turbulence','decay','spread','repulsion','wobble']; for(let id of ids){ let el=document.getElementById(id); if(el){ el.value=params[id]; document.getElementById(id+'-value').textContent=params[id]; } } updateSeedDisplay(); initializeSystem(); }
+window.addEventListener('load',updateSeedDisplay);
+</script>
+</body>
+</html>
