@@ -1,14 +1,15 @@
 "use client";
-
-import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
-import { Activity, Send, Wand2 } from "lucide-react";
+import { useEffect } from "react";
 import { Shell } from "@/components/Shell";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
+import { Activity, Send, Wand2 } from "lucide-react";
 import { apiFetch, getToken, Result } from "@/lib/api";
 
 function sentimentClass(sentiment?: string) {
   return sentiment === "Negative" ? "sentiment-negative" : sentiment === "Neutral" ? "sentiment-neutral" : "sentiment-positive";
 }
+
 
 export default function AnalyzePage() {
   const router = useRouter();

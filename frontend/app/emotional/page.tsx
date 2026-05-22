@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 import { Shell } from "@/components/Shell";
 
@@ -198,13 +200,31 @@ export default function EmotionalPage() {
           {/* Controls - simplified for brevity */}
           <div className="control-section">
             <h3>Seed</h3>
-            <input type="number" className="seed-input" id="seed-input" defaultValue={12345} onChange={() => updateSeed()} />
-            <div className="seed-controls">
-              <button onClick={previousSeed}>← Prev</button>
-              <button onClick={nextSeed}>Next →</button>
-            </div>
-            <button style={{width:'100%'}} onClick={randomSeedAndUpdate}>⚄ Random Seed</button>
-          </div>
+            <input
+  type="number"
+  className="seed-input"
+  id="seed-input"
+  defaultValue={12345}
+  onChange={() => (window as any).updateSeed?.()}
+/>
+
+<div className="seed-controls">
+  <button onClick={() => (window as any).previousSeed?.()}>
+    ← Prev
+  </button>
+
+  <button onClick={() => (window as any).nextSeed?.()}>
+    Next →
+  </button>
+</div>
+
+<button
+  style={{ width: "100%" }}
+  onClick={() => (window as any).randomSeedAndUpdate?.()}
+>
+  ⚄ Random Seed
+</button>
+</div>
           {/* Additional control sections could be added here following the original HTML */}
         </aside>
         <div className="emotional-canvas-area">

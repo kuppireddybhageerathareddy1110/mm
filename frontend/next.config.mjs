@@ -3,9 +3,9 @@ const nextConfig = {
   rewrites: async () => [
     {
       source: "/api/:path*",
-      destination: `${process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"}/api/:path*`
-    }
-  ]
+      destination: "http://backend:8000/api/:path*",
+    },
+  ],
 };
 
 export default nextConfig;
